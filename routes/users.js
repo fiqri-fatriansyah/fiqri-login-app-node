@@ -1,5 +1,6 @@
 import express from "express";
 import prisma from "../prisma/prisma";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -8,28 +9,35 @@ router.post("/", async (req, res) => {
 
     //asynchronous
     try {
-        const user = await prisma.Users.create({
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
+
+        //console.log("password:", password);
+        //console.log("hash:", hash);
+        
+        const user = await prisma.UsersFiqri.create({
             data: {
-                username,
-                password,
-                nama,
+                "username": username,
+                "password": hash,
+                "nama": nama,
             },
         });
 
+
         if (user && user.id) {
-            res.status(200).json({ message: "Berhasil menambah user", result: user });
+            res.status(201).json({ message: "Berhasil menambah user", result: user });
             return;
         }
 
         res.status(400).json({ message: "Gagal menambah user" });
-    } catch (error) {
-        console.log({ error });
-        res.status(500).json({ message: "Internal server error" });
+    } catch (err) {
+        console.log({ err });
+        res.status(500).json({ message: "Internal server error:", error });
     }
 });
 
 router.get("/", (req, res) => {
-    prisma.Users
+    prisma.UsersFiqri
     .findMany({
         select: {
             id: true,
@@ -42,13 +50,13 @@ router.get("/", (req, res) => {
         res.status(200).json({ results: users })
     )
     .catch((err) => {
-        console.log("Error: ", err);
-        res.status(500).json({ message: "Internal server error" });
+        console.log({ err });
+        res.status(500).json({ message: "Internal server error", err });
     });
 });
 
 router.get("/:userid", (req, res) => {
-    prisma.Users
+    prisma.UsersFiqri
     .findUnique({
         where: {
             id: req.params.userid
@@ -58,14 +66,14 @@ router.get("/:userid", (req, res) => {
         res.status(200).json({ results: user })
     )
     .catch((err) => {
-        console.log("Error: ", err);
-        res.status(500).json({ message: "Internal server error" });
+        console.log({ err });
+        res.status(500).json({ message: "Internal server error", err });
     });
 });
 
 router.put("/:userid", async (req, res) => {
     try {
-        const isExist = await prisma.Users.findUnique({
+        const isExist = await prisma.UsersFiqri.findUnique({
             where: {
                 id: req.params.userid,
             },
@@ -76,7 +84,7 @@ router.put("/:userid", async (req, res) => {
             return;
         }
 
-        const doUpdate = await prisma.Users.update({
+        const doUpdate = await prisma.UsersFiqri.update({
             where: {
                 id: req.params.userid,
             },
@@ -99,14 +107,14 @@ router.put("/:userid", async (req, res) => {
         });
     }
     catch(err) {
-        console.log({ error });
-        res.status(500).json({ message: "Internal server error" });
+        console.log({ err });
+        res.status(500).json({ message: "Internal server error", err });
     }
 });
 
 router.delete("/:userid", async (req, res) => {
     try {
-        const isExist = await prisma.Users.findUnique({
+        const isExist = await prisma.UsersFiqri.findUnique({
             where: { id: req.params.userid },
         });
 
@@ -115,7 +123,7 @@ router.delete("/:userid", async (req, res) => {
             return;
         }
 
-        const doDelete = await prisma.Users.delete({
+        const doDelete = await prisma.UsersFiqri.delete({
             where: { id: req.params.userid },
         });
 

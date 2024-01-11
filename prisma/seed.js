@@ -4,7 +4,7 @@ import users from "./seeds/users.json";
 async function main() {
     const seedUsers = await Promise.all(
         users.map((user) => 
-            prisma.Users.upsert({
+            prisma.UsersFiqri.upsert({
                 where: { id: user.id },
                 create: { ...user },
                 update: { ...user },

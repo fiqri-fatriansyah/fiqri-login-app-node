@@ -10,9 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model UsersFiqri {
   id       String @id @default(uuid())
-  username String @db.VarChar(50)
+  username String @unique @db.VarChar(50)
   password String
   nama     String @db.VarChar(50)
 
