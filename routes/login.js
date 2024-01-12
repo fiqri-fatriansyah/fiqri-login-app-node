@@ -32,7 +32,7 @@ router.post("/", (req, res) => {
                         process.env.JWT_SECRET,
                         { expiresIn: '5m'});
                 
-                    res.status(200).json({ token });
+                    res.status(200).json({ message: "Login berhasil", "token": token, });
                 }
                 else {
                     res.status(401).json({ message: "Password salah! Ketik yang bener." });
