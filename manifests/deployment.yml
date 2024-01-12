@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $appName
+  namespace: $nameSpace
+spec:
+  replicas: $replica
+  selector:
+    matchLabels:
+      app: $appName
+  template:
+    metadata:
+      labels:
+        app: $appName
+    spec:
+      containers:
+        - name: $appName
+          image: docker.posindonesia.co.id/mt-2024/$image:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: $configMap
+      imagePullSecrets:
+        - name: nexus-image-secret

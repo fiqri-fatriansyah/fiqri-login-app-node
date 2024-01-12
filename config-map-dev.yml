@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: $configName
+  labels:
+    name: $configName
+  namespace: $nameSpace
+data:
+  DATABASE_URL: "postgresql://latihan:123qweasd@10.60.64.47:5432/mt2024?schema=kelompok_2_fiqri"
+  JWT_SECRET: "FIQRIGANTENG"
